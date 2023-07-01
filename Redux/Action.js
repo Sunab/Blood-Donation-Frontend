@@ -15,6 +15,9 @@ import {
   resetPasswordRequest,
   resetPasswordSuccess,
   resetPasswordFail,
+  getTaskRequest,
+  getTaskSuccess,
+  getTaskFailure,
 } from "./messageSlice";
 import {
   loadUserFail,
@@ -80,17 +83,19 @@ export const loadUser = () => async (dispatch) => {
 // add Task
 
 export const addTask =
-  (title, description, hospitalName, bloodType, requestCase) =>
+  (title, description, hospital_name, blood_group, longitude, latitude) =>
   async (dispatch) => {
     try {
       dispatch(addTaskRequest());
-      const { data } = await api.post("/new/task", {
+      const { data } = await api.post("/newtask", {
         title,
         description,
-        hospitalName,
-        bloodType,
-        requestCase,
+        hospital_name,
+        blood_group,
+        longitude,
+        latitude,
       });
+      console.log(data, "responseeee");
       dispatch(addTaskSuccess(data.message));
     } catch (error) {
       dispatch(addTaskFail(error.response));
@@ -202,3 +207,14 @@ export const resetPassword =
       dispatch(resetPasswordFail(error.message));
     }
   };
+//fetched all tasks array
+export const getTasks = () => async (dispatch) => {
+  try {
+    dispatch(getTaskRequest());
+    const { data } = await api.get("/viewtask");
+
+    dispatch(getTaskSuccess(data));
+  } catch (error) {
+    dispatch(getTaskFailure(error.response));
+  }
+};

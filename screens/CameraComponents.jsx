@@ -52,6 +52,7 @@ const CameraComponent = ({ navigation, route }) => {
     } else {
       return navigation.navigate("Register", { image: data.assets[0].uri });
     }
+    //
   };
 
   if (!permission) {

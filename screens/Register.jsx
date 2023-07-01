@@ -4,28 +4,49 @@ import {
   StyleSheet,
   TouchableOpacity,
   TextInput,
+  ScrollView,
+  Image,
+  SafeAreaView,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { Avatar, Button } from "react-native-paper";
 import { useDispatch, useSelector } from "react-redux";
 import { register } from "../Redux/Action";
+import Camera from "../screens/CameraComponents";
+import SelectDropdown from "react-native-select-dropdown";
 import mime from "mime";
 import { clearErrors } from "../Redux/userSlice";
 const Register = ({ navigation, route }) => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [number, setNumber] = useState("");
+  const [bloodgroup, setBloodgroup] = useState("");
   const [avatar, setAvatar] = useState("");
   const dispatch = useDispatch();
   const { loading, error } = useSelector((state) => state.auth);
-  const handleImage = () => {
+  const handleImage = (e) => {
+    if (e !== null) {
+    }
     navigation.navigate("Camera", { updateProfile: false });
   };
+  const BloodGroups = [
+    "A+ ",
+    "A- ",
+    "B+ ",
+    "B- ",
+    "AB+ ",
+    "AB- ",
+    "0+ ",
+    "0 - ",
+  ];
   const registerHandler = () => {
     const myForm = new FormData();
     myForm.append("name", name);
     myForm.append("email", email);
     myForm.append("password", password);
+    myForm.append("bloodgroup", bloodgroup);
+
     myForm.append("avatar", {
       uri: avatar,
       type: mime.getType(avatar),
@@ -47,18 +68,17 @@ const Register = ({ navigation, route }) => {
       dispatch(clearErrors());
     }
   }, [route, alert, error, dispatch]);
+  console.log(avatar, "hvfsdh");
 
   return (
     <View style={registerStyle.registerContainer}>
-      <Text style={registerStyle.registerHeader}>Register</Text>
-      <Avatar.Image
-        size={100}
-        source={{ uri: avatar ? avatar : null }}
-        style={{ backgroundColor: "#900" }}
-      />
-
       <TouchableOpacity onPress={handleImage}>
-        <Text style={{ color: "#900" }}>Change Photo</Text>
+        <Text style={registerStyle.registerHeader}>Register</Text>
+        <Avatar.Image
+          size={100}
+          source={{ uri: avatar ? avatar : null }}
+          style={{ backgroundColor: "#900" }}
+        />
       </TouchableOpacity>
 
       <View style={{ width: "70%" }}>
@@ -81,16 +101,21 @@ const Register = ({ navigation, route }) => {
           value={password}
           onChangeText={setPassword}
         />
-      </View>
 
+        <SelectDropdown
+          defaultButtonText="Blood Group"
+          value={bloodgroup}
+          data={BloodGroups}
+          onSelect={setBloodgroup}
+        />
+      </View>
       <Button
         style={registerStyle.btn}
         onPress={registerHandler}
-        disabled={!email || !password || !name}
+        disabled={!email || !password || !name || !avatar}
       >
         <Text style={{ color: "#fff" }}>Register</Text>
       </Button>
-
       <View style={{ marginVertical: 20, flexDirection: "row" }}>
         <Text>Already a User?</Text>
         <TouchableOpacity onPress={() => navigation.navigate("Login")}>
@@ -124,6 +149,7 @@ const registerStyle = StyleSheet.create({
   },
   btn: {
     backgroundColor: "#900",
+    marginTop: 20,
     padding: 5,
     width: "70%",
     borderRadius: 0,

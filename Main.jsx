@@ -9,13 +9,13 @@ import Profile from "./screens/Profile";
 import Register from "./screens/Register";
 import ChangePassword from "./screens/ChangePassword";
 import Verify from "./screens/Verify";
+import Add from "./screens/Add";
 import ForgotPassword from "./screens/ForgotPassword";
 import ResetPassword from "./screens/ResetPassword";
 import UpdateProfile from "./screens/updateProfile";
 import CameraComponent from "./screens/CameraComponents";
 import { useDispatch, useSelector } from "react-redux";
 import { loadUser } from "./Redux/Action";
-import Add from "./screens/Add";
 const Main = () => {
   const dispatch = useDispatch();
   useEffect(() => {
@@ -72,8 +72,8 @@ const Main = () => {
           backgroundColor: "#694fad",
           height: 70,
           overflow: "hidden",
-          borderTopLeftRadius: 20,
-          borderTopRightRadius: 20,
+          // borderTopLeftRadius: 20,
+          // borderTopRightRadius: 20,
           borderColor: "#694fad",
           elevation: 10,
           shadowOffset: {
@@ -128,6 +128,8 @@ const Main = () => {
         screenOptions={{ headerShown: false }}
       >
         <Stack.Screen name="bottom-tab" component={BottomTab} />
+        <Stack.Screen name="resetPassword" component={ResetPassword} />
+        <Stack.Screen name="changePassword" component={ChangePassword} />
         <Stack.Screen name="Verify" component={Verify} />
         <Stack.Screen name="updateProfile" component={UpdateProfile} />
         <Stack.Screen name="Camera" component={CameraComponent} />

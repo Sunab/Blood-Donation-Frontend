@@ -10,32 +10,69 @@ import {
   ScrollView,
 } from "react-native";
 import React, { useEffect, useState } from "react";
-import Task from "../components/Task";
 import Icon from "react-native-vector-icons/Entypo";
 import { Dialog, Button } from "react-native-paper";
 import { useDispatch, useSelector } from "react-redux";
+import * as Location from "expo-location";
 import { clearErrors, clearMessage } from "../Redux/messageSlice";
-import Loader from "../components/Loader";
 import { addTask, loadUser } from "../Redux/Action";
+import SelectDropdown from "react-native-select-dropdown";
 
 const Add = () => {
   const dispatch = useDispatch();
+
   const { error, message, loading } = useSelector((state) => state.task);
-  const { user, isAuthenticated } = useSelector((state) => state.auth);
   const [openDialog, setOpenDialog] = useState(false);
   const [title, setTitle] = useState("");
+  const [location, setLocation] = useState(null);
+  const [errorMsg, setErrorMsg] = useState(null);
   const [description, setDescription] = useState("");
-  const [bloodType, setbloodType] = useState("");
+  const [BloodGroup, setBloodGroup] = useState("");
   const [hospitalName, sethospitalName] = useState("");
-  console.log("my isAuthenticated is", isAuthenticated);
+
+  const addTaskHandler = async () => {
+    dispatch(
+      addTask(
+        title,
+        description,
+        hospitalName,
+        BloodGroup,
+        location.longitude,
+        location.latitude
+      )
+    );
+    dispatch(loadUser());
+  };
+  const BloodGroups = [
+    "A+ ",
+    "A- ",
+    "B+ ",
+    "B- ",
+    "AB+ ",
+    "AB- ",
+    "0+ ",
+    "0 - ",
+  ];
+
   const openDialogHandler = () => {
     setOpenDialog(!openDialog);
   };
-  const addTaskHandler = async () => {
-    dispatch(addTask(title, description, hospitalName, bloodType));
-    dispatch(loadUser());
-  };
   useEffect(() => {
+    (async () => {
+      try {
+        const { status } = await Location.requestForegroundPermissionsAsync();
+        if (status !== "granted") {
+          console.log("Permission to access location was denied");
+          return;
+        }
+
+        const locationData = await Location.getCurrentPositionAsync({});
+
+        setLocation(locationData.coords);
+      } catch (error) {
+        setErrorMsg("Error fetching location");
+      }
+    })();
     if (error) {
       alert(error);
       dispatch(clearErrors());
@@ -45,6 +82,8 @@ const Add = () => {
       dispatch(clearMessage());
       setDescription("");
       setTitle("");
+      setBloodGroup("");
+      sethospitalName("");
     }
   }, [error, message, alert, dispatch]);
 
@@ -53,35 +92,17 @@ const Add = () => {
       <View style={homeContainerStyle.homeContainer}>
         <ScrollView>
           <SafeAreaView>
-            {isAuthenticated !== undefined && isAuthenticated !== false ? (
-              user.tasks &&
-              user.tasks.map((item, index) => (
-                <Task
-                  key={index}
-                  title={item.title}
-                  description={item.description}
-                  blood_type={item.bloodType}
-                  case={item.requestCase}
-                  hospital_name={item.hospitalName}
-                  status={item.completed}
-                  taskId={item._id}
-                />
-              ))
-            ) : (
-              <Loader />
-            )}
-
             <TouchableOpacity
               onPress={openDialogHandler}
               style={homeContainerStyle.addToListContainer}
             >
-              <Icon size={20} color={"#900"} name="add-to-list" />
+              <Icon size={20} color={"#ff0000"} name="add-to-list" />
             </TouchableOpacity>
           </SafeAreaView>
         </ScrollView>
       </View>
       <Dialog visible={openDialog} onDismiss={openDialogHandler}>
-        <Dialog.Title>Add a task</Dialog.Title>
+        <Dialog.Title>Add Request</Dialog.Title>
         <Dialog.Content>
           <TextInput
             style={homeContainerStyle.input}
@@ -101,20 +122,32 @@ const Add = () => {
             value={hospitalName}
             onChangeText={sethospitalName}
           />
-          <TextInput
-            style={homeContainerStyle.input}
-            placeholder="Blood Type"
-            value={bloodType}
-            onChangeText={setbloodType}
+
+          <SelectDropdown
+            style={{ borderRadius: 15 }}
+            defaultButtonText="Blood Group"
+            value={BloodGroup}
+            data={BloodGroups}
+            onSelect={setBloodGroup}
           />
+          <View>
+            {errorMsg ? (
+              <Text>{errorMsg}</Text>
+            ) : location !== null ? (
+              <Text>
+                Latitude: {location?.latitude} , Longitude: {location.longitude}
+              </Text>
+            ) : (
+              <Text>Loading location...</Text>
+            )}
+          </View>
 
           <View style={{ flexDirection: "row", alignItems: "center" }}>
             <TouchableOpacity onPress={openDialogHandler}>
               <Text>Cancel</Text>
             </TouchableOpacity>
-
             <Button
-              disabled={!title || !description}
+              disabled={!title || !description || !hospitalName}
               onPress={addTaskHandler}
               textColor="#900"
             >
@@ -129,8 +162,9 @@ const Add = () => {
 
 const homeContainerStyle = StyleSheet.create({
   homeContainer: {
-    backgroundColor: "#ffff",
+    backgroundColor: "red",
     flex: 1,
+    color: "#ff0000",
     paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
   },
   textViewHeading: {
@@ -142,23 +176,24 @@ const homeContainerStyle = StyleSheet.create({
     backgroundColor: "#474747",
   },
   addToListContainer: {
-    backgroundColor: "#fff",
+    backgroundColor: "aliceblue",
     width: 150,
     height: 50,
     justifyContent: "center",
     alignItems: "center",
-    borderRadius: 100,
+    borderRadius: 50,
     alignSelf: "center",
     marginVertical: 20,
+    marginTop: 250,
     elevation: 5,
   },
   input: {
     backgroundColor: "#fff",
     borderWidth: 1,
     borderColor: "#b5b5b5",
-    padding: 10,
+    padding: 5,
     paddingLeft: 15,
-    borderRadius: 5,
+    borderRadius: 15,
     marginVertical: 15,
     fontSize: 15,
   },

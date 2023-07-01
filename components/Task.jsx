@@ -5,7 +5,16 @@ import Icon from "react-native-vector-icons/AntDesign";
 import { useDispatch } from "react-redux";
 import { deleteTask, loadUser, updateTask } from "../Redux/Action";
 
-const Task = ({ title, description, status, taskId }) => {
+const Task = ({
+  title,
+  description,
+  hospital_name,
+  blood_group,
+  longitude,
+  latitude,
+  status,
+  taskId,
+}) => {
   const [completed, setCompleted] = useState(status);
   const dispatch = useDispatch();
 
@@ -18,14 +27,18 @@ const Task = ({ title, description, status, taskId }) => {
   // console.log("is handle checkbox,", handleCheckedBox;
   const deleteHandler = async () => {
     console.log("deleting task");
-    await dispatch(deleteTask(taskId));
-    await dispatch(loadUser());
+    dispatch(deleteTask(taskId));
+    dispatch(loadUser());
   };
   return (
     <View style={taskStyle.taskContainer}>
       <View style={{ width: "70%" }}>
         <Text style={taskStyle.tasksTitle}>{title}</Text>
-        <Text style={taskStyle.tasksDesc}>{description}</Text>
+        <Text style={taskStyle.tasksTitle}>{description}</Text>
+        <Text style={taskStyle.tasksTitle}>{hospital_name}</Text>
+        <Text style={taskStyle.tasksTitle}>{blood_group}</Text>
+        <Text style={taskStyle.tasksTitle}>{longitude}</Text>
+        <Text style={taskStyle.tasksTitle}>{latitude}</Text>
       </View>
 
       <Checkbox

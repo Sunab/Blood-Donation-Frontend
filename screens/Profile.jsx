@@ -1,10 +1,4 @@
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  TextInput,
-} from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import React, { useEffect, useState } from "react";
 import { Avatar, Button } from "react-native-paper";
 import { useDispatch, useSelector } from "react-redux";
@@ -50,45 +44,54 @@ const Profile = ({ navigation, route }) => {
     <Loader />
   ) : (
     <View style={profileStyle.profileContainer}>
-      <Avatar.Image
-        style={profileStyle.avatarStyle}
-        size={100}
-        source={{ uri: user ? user?.user.avatar.url : null }}
-      />
-
       <TouchableOpacity onPress={handleImage}>
-        <Text style={profileStyle.changeProfilePic}>Change Photo</Text>
+        <Avatar.Image
+          style={profileStyle.avatarStyle}
+          size={100}
+          source={{ uri: user ? user?.user.avatar.url : null }}
+        />
       </TouchableOpacity>
 
-      <View>
-        {/* <TextInput
-          style={profileStyle.input}
-          // placeholder="Name"
-
-          onChangeText={setName}
-        /> */}
+      <View
+        style={{
+          marginRight: 80,
+          width: "70%",
+        }}
+      >
         <Text
           style={{
             fontSize: 20,
-            alignSelf: "center",
+            fontWeight: "bold",
+            color: "#3498db",
           }}
         >
           {user?.user.name}
         </Text>
         <Text
           style={{
-            marginTop: 10,
             fontSize: 20,
-            alignSelf: "center",
+            fontWeight: "bold",
+            color: "#3498db",
           }}
         >
           {user?.user.email}
         </Text>
-
-        <Button onPress={() => navigation.navigate(updateProfile)}>
-          <Text style={profileStyle.btnTxt}>Update Profile</Text>
-        </Button>
+        {/* <Text
+          style={{
+            fontSize: 20,
+            fontWeight: "bold",
+            color: "#ffff",
+          }}
+        >
+          {user?.user.bloodgroup}
+        </Text> */}
       </View>
+      <Button
+        style={profileStyle.btnUpdate}
+        onPress={() => navigation.navigate(updateProfile)}
+      >
+        <Text style={profileStyle.btnTxt}>Update Profile</Text>
+      </Button>
       {user.verified ? null : (
         <Button
           style={profileStyle.btnVerify}
@@ -99,7 +102,7 @@ const Profile = ({ navigation, route }) => {
       )}
       <Button
         style={profileStyle.btn2}
-        onPress={() => navigation.navigate("ChangePassword")}
+        onPress={() => navigation.navigate("changePassword")}
       >
         <Text style={profileStyle.btnTxt}>Change Password</Text>
       </Button>
@@ -114,35 +117,26 @@ const Profile = ({ navigation, route }) => {
 const profileStyle = StyleSheet.create({
   profileContainer: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: "red",
     alignItems: "center",
     // justifyContent: "center",
   },
 
   avatarStyle: {
     marginTop: 50,
+    marginRight: 200,
     backgroundColor: "#900",
   },
 
   changeProfilePic: {
-    color: "#900",
-    margin: 20,
+    color: "black",
+    marginRight: 200,
   },
 
   profileInput: {
     width: "70%",
   },
 
-  input: {
-    backgroundColor: "#fff",
-    borderWidth: 1,
-    borderColor: "#b5b5b5",
-    padding: 10,
-    paddingLeft: 15,
-    borderRadius: 5,
-    marginVertical: 15,
-    fontSize: 15,
-  },
   btn: {
     backgroundColor: "#f0ad4e",
     padding: 5,
@@ -163,10 +157,17 @@ const profileStyle = StyleSheet.create({
     width: "70%",
     borderRadius: 0,
   },
+  btnUpdate: {
+    backgroundColor: "#666699",
+    padding: 5,
+    marginTop: 15,
+    width: "70%",
+    borderRadius: 0,
+  },
   btnVerify: {
     backgroundColor: "#5cb85c",
     padding: 5,
-    marginTop: 5,
+    marginTop: 15,
     width: "70%",
     borderRadius: 0,
   },

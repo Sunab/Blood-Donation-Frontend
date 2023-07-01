@@ -21,6 +21,17 @@ export const messageSlice = createSlice({
     clearMessage: (state) => {
       state.message = null;
     },
+    getTaskRequest: (state) => {
+      state.isLoading = true;
+    },
+    getTaskSuccess: (state, action) => {
+      state.isLoading = false;
+      state.allTasks = action.payload.allTasks;
+    },
+    getTaskFailure: (state, action) => {
+      state.isLoading = false;
+      state.message = action.payload;
+    },
   },
 });
 
@@ -30,6 +41,9 @@ export const {
   addTaskFail,
   clearErrors,
   clearMessage,
+  getTaskRequest,
+  getTaskSuccess,
+  getTaskFailure,
 } = messageSlice.actions;
 
 export default messageSlice.reducer;
